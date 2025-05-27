@@ -421,30 +421,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     setInterval(animateDecorations, 3000);
 
-    // 处理视频加载和错误
+    // 视频加载处理
     const videos = document.querySelectorAll('video');
     
     videos.forEach(video => {
         const wrapper = video.closest('.video-wrapper');
         const loading = wrapper?.querySelector('.video-loading');
         const fallback = wrapper?.querySelector('.video-fallback');
-
-        // 初始化时隐藏fallback
-        if (fallback) {
-            fallback.style.display = 'none';
-        }
-
+        
         // 视频可以播放时
         video.addEventListener('canplay', function() {
+            video.style.opacity = '1';
             if (loading) {
                 loading.style.display = 'none';
             }
-            video.style.opacity = '1';
+            if (fallback) {
+                fallback.style.display = 'none';
+            }
         });
-
-        // 视频加载失败时
+        
+        // 视频加载错误时
         video.addEventListener('error', function(e) {
-            console.error('Video error:', e);
+            console.error('视频加载错误:', e);
             if (loading) {
                 loading.style.display = 'none';
             }
@@ -452,11 +450,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 fallback.style.display = 'flex';
             }
         });
-
-        // 视频加载超时处理
-        let loadTimeout = setTimeout(() => {
-            if (video.readyState === 0) { // 如果视频还没有加载
-                console.log('Video load timeout');
+        
+        // 视频加载超时检查
+        setTimeout(() => {
+            if (video.readyState === 0) {
                 if (loading) {
                     loading.style.display = 'none';
                 }
@@ -464,24 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     fallback.style.display = 'flex';
                 }
             }
-        }, 5000); // 5秒超时
-
-        // 视频开始加载时
-        video.addEventListener('loadstart', function() {
-            console.log('Video loading started');
-            if (loading) {
-                loading.style.display = 'flex';
-            }
-        });
-
-        // 视频加载完成时
-        video.addEventListener('loadeddata', function() {
-            console.log('Video loaded');
-            clearTimeout(loadTimeout);
-            if (loading) {
-                loading.style.display = 'none';
-            }
-        });
+        }, 5000);
     });
 
     // 相册翻页功能
